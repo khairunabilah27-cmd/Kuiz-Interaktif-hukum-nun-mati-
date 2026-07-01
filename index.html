@@ -1,0 +1,397 @@
+```html
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuiz Interaktif: Hukum Nun Mati & Tanwin</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .arabic-text {
+            font-family: 'Cairo', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-teal-50 to-emerald-100 min-h-screen flex flex-col items-center justify-between p-4 md:p-6 text-slate-800">
+
+    <!-- Header / Top Bar -->
+    <header class="w-full max-w-2xl text-center py-4">
+        <h1 class="text-2xl md:text-3xl font-extrabold text-emerald-800 tracking-tight flex items-center justify-center gap-2">
+            <span>✨</span> Kuiz Tajwid Interaktif <span>✨</span>
+        </h1>
+        <p class="text-sm md:text-base text-emerald-600 font-semibold mt-1">Topik: Hukum Nun Sakinah (Mati) & Tanwin</p>
+    </header>
+
+    <!-- Main Card Container -->
+    <main class="w-full max-w-2xl bg-white rounded-3xl shadow-xl border border-emerald-100/50 p-6 md:p-8 flex-grow flex flex-col justify-between transition-all duration-300 relative overflow-hidden">
+        
+        <!-- START SCREEN -->
+        <div id="start-screen" class="flex flex-col items-center text-center py-8 space-y-6">
+            <div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center text-4xl shadow-inner animate-bounce">
+                📖
+            </div>
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold text-slate-800">Sedia untuk Menguji Minda?</h2>
+                <p class="text-slate-500 max-w-md mx-auto">Mari jawab 20 soalan menarik mengenai Hukum Nun Mati & Tanwin. Sesuai untuk semua tahap murid sekolah!</p>
+            </div>
+            
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-left max-w-md w-full">
+                <h3 class="font-bold text-amber-800 flex items-center gap-2 mb-1">
+                    ℹ️ Cara Bermain:
+                </h3>
+                <ul class="text-xs md:text-sm text-amber-700 space-y-1 list-disc list-inside">
+                    <li>Ada 20 soalan objektif aneka pilihan.</li>
+                    <li>Satu jawapan sahaja yang betul bagi setiap soalan.</li>
+                    <li>Kotak penjelasan tajwid akan terus keluar selepas anda klik.</li>
+                    <li>Kumpul markah penuh dan dapatkan pangkat terbaik!</li>
+                </ul>
+            </div>
+
+            <button id="btn-start" class="w-full max-w-xs bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold py-4 px-8 rounded-2xl shadow-lg shadow-emerald-500/30 transition-all duration-200 text-lg">
+                Mula Kuiz Sekarang 🚀
+            </button>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quiz-screen" class="hidden flex-col flex-grow space-y-6">
+            <!-- Progress & Score Header -->
+            <div class="space-y-3">
+                <div class="flex justify-between items-center text-sm font-bold text-slate-600">
+                    <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full" id="question-counter">Soalan 1 / 20</span>
+                    <span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full" id="score-counter">Markah: 0</span>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-emerald-400 to-teal-500 h-full transition-all duration-300" style="width: 5%"></div>
+                </div>
+            </div>
+
+            <!-- Question Box -->
+            <div class="space-y-4">
+                <h3 id="question-text" class="text-lg md:text-xl font-bold text-slate-800 leading-relaxed">
+                    Sila tunggu, soalan sedang dimuatkan...
+                </h3>
+                <!-- Arabic snippet container (if available for the question) -->
+                <div id="arabic-container" class="hidden bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100 text-center">
+                    <span id="arabic-text" class="arabic-text text-3xl md:text-4xl text-emerald-950 font-bold tracking-wide"></span>
+                </div>
+            </div>
+
+            <!-- Choices Grid -->
+            <div id="choices-container" class="grid grid-cols-1 gap-3">
+                <!-- Buttons will be dynamically inserted here -->
+            </div>
+
+            <!-- Feedback / Explanation Box -->
+            <div id="feedback-box" class="hidden transform translate-y-2 opacity-0 transition-all duration-300 ease-out bg-slate-50 rounded-2xl p-4 border flex flex-col gap-2">
+                <div class="flex items-center gap-2 font-bold text-base md:text-lg" id="feedback-title">
+                    <!-- Dynamic status (Betul/Salah) and icon -->
+                </div>
+                <p id="feedback-explanation" class="text-xs md:text-sm text-slate-600 leading-relaxed">
+                    Penjelasan tajwid diletakkan di sini.
+                </p>
+            </div>
+
+            <!-- Navigation Button -->
+            <div class="flex justify-end pt-2">
+                <button id="btn-next" class="hidden bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all duration-200 items-center gap-2">
+                    <span>Seterusnya</span> ➡️
+                </button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div id="results-screen" class="hidden flex-col items-center text-center py-6 space-y-6">
+            <div class="relative">
+                <div class="w-32 h-32 rounded-full flex items-center justify-center text-6xl shadow-xl border-4 border-white" id="rank-emoji-bg">
+                    🎓
+                </div>
+                <div class="absolute -bottom-2 -right-2 bg-amber-400 text-white font-extrabold px-3 py-1 rounded-full text-xs shadow-md" id="rank-badge">
+                    MUMTAZ
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800">Tahniah, Selesai!</h2>
+                <p class="text-slate-500 text-sm md:text-base">Anda telah berjaya menamatkan kuiz Hukum Nun Mati & Tanwin.</p>
+            </div>
+
+            <!-- Score Cards -->
+            <div class="grid grid-cols-2 gap-4 w-full max-w-md">
+                <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl text-center">
+                    <span class="block text-xs font-bold text-emerald-600 uppercase tracking-wider">Jawapan Betul</span>
+                    <span class="text-2xl font-black text-emerald-800" id="final-correct">18 / 20</span>
+                </div>
+                <div class="bg-teal-50 border border-teal-100 p-4 rounded-2xl text-center">
+                    <span class="block text-xs font-bold text-teal-600 uppercase tracking-wider">Peratus Skor</span>
+                    <span class="text-2xl font-black text-teal-800" id="final-percentage">90%</span>
+                </div>
+            </div>
+
+            <!-- Feedback Summary -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 w-full max-w-md text-slate-600 text-sm leading-relaxed" id="final-comment">
+                Hebat sungguh pemahaman tajwid anda! Teruskan membaca Al-Quran dengan tartil dan betul.
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 w-full max-w-md pt-2">
+                <button id="btn-restart" class="flex-1 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition-all duration-200">
+                    Cuba Lagi 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-4 text-xs text-emerald-700/60 font-semibold">
+        Dicipta khas untuk kemudahan PdPc Pendidikan Islam & Tajwid Al-Quran.
+    </footer>
+
+    <!-- Interactive Logic (JavaScript) -->
+    <script>
+        // Quiz Data - 20 Questions
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "Apakah yang dimaksudkan dengan 'Nun Sakinah'?",
+                arabic: "نْ",
+                choices: [
+                    "Nun yang mempunyai baris satu di atas (Fathah)",
+                    "Nun yang tidak berbaris atau bertanda sukun (mati)",
+                    "Nun yang bersabdu (bertasydid)",
+                    "Nun yang terletak di hujung ayat sahaja"
+                ],
+                correctIndex: 1,
+                explanation: "Betul! Nun Sakinah (Nun mati) ialah huruf Nun (نْ) yang tidak berbaris (fathah, dhommah, atau kasrah) dan bertanda sukun."
+            },
+            {
+                id: 2,
+                question: "Berapakah hukum tajwid yang terhasil apabila Nun Sakinah atau Tanwin bertemu dengan huruf Hijaiyah?",
+                choices: [
+                    "3 Hukum",
+                    "4 Hukum",
+                    "5 Hukum",
+                    "6 Hukum"
+                ],
+                correctIndex: 1,
+                explanation: "Tepat sekali! Terdapat 4 hukum utama iaitu: Izhar Halqi, Idgham (Maal Ghunnah & Bila Ghunnah), Iqlab, dan Ikhfa' Haqiqi."
+            },
+            {
+                id: 3,
+                question: "Manakah antara berikut merupakan semua huruf bagi hukum Izhar Halqi?",
+                choices: [
+                    "ي , ن , م , و",
+                    "ء , هـ , ع , ح , غ , خ",
+                    "ت , ث , ج , د , ذ",
+                    "ب"
+                ],
+                correctIndex: 1,
+                explanation: "Benar! Huruf Izhar Halqi ada 6 yang keluar dari kerongkong (halqum): Hamzah (ء), Ha (هـ), 'Ain (ع), Ha (ح), Ghain (غ), dan Kha (خ)."
+            },
+            {
+                id: 4,
+                question: "Bagaimanakah cara bacaan yang betul bagi hukum Izhar Halqi?",
+                choices: [
+                    "Membunyikan huruf Nun dengan jelas, terang dan tanpa dengung",
+                    "Memasukkan bunyi huruf Nun ke dalam huruf seterusnya dengan dengung",
+                    "Menyembunyikan bunyi huruf Nun antara jelas dan samar",
+                    "Menukarkan bunyi huruf Nun kepada bunyi huruf Mim (م)"
+                ],
+                correctIndex: 0,
+                explanation: "Izhar bermaksud 'jelas' atau 'terang'. Oleh itu, sebutan Nun Mati hendaklah dibaca jelas tanpa dengung."
+            },
+            {
+                id: 5,
+                question: "Apakah maksud 'Idgham' dari segi bahasa?",
+                choices: [
+                    "Jelas dan nyata",
+                    "Menukar sesuatu",
+                    "Memasukkan atau mengintegrasikan sesuatu ke dalam sesuatu yang lain",
+                    "Menyembunyikan atau menyamarkan"
+                ],
+                correctIndex: 2,
+                explanation: "Betul! Dari segi bahasa, Idgham bermaksud memasukkan. Dalam tajwid, ia memasukkan bunyi Nun Mati ke dalam huruf berikutnya."
+            },
+            {
+                id: 6,
+                question: "Pilih kumpulan huruf bagi Idgham Maal Ghunnah (idgham berserta dengung).",
+                choices: [
+                    "ل , ر",
+                    "ء , هـ",
+                    "ي , ن , م , w (يَنْمُو)",
+                    "ب"
+                ],
+                correctIndex: 2,
+                explanation: "Tepat! Huruf Idgham Maal Ghunnah disingkatkan sebagai 'Yanmu' (ي , ن , م , و). Ia dibaca dengan memasukkan sebutan sambil mendengung sebanyak 2 harakat."
+            },
+            {
+                id: 7,
+                question: "Apakah hukum bacaan bagi kalimah di bawah apabila nun mati bertemu dengan huruf Ra (ر)?",
+                arabic: "مِنْ رَبِّهِمْ",
+                choices: [
+                    "Izhar Halqi",
+                    "Idgham Bila Ghunnah",
+                    "Iqlab",
+                    "Ikhfa' Haqiqi"
+                ],
+                correctIndex: 1,
+                explanation: "Betul! Ini adalah Idgham Bila Ghunnah (memasukkan tanpa dengung) kerana Nun Mati bertemu dengan huruf Ra (ر). Bunyi nun terus hilang masuk ke ra: 'Mir-rabbihim'."
+            },
+            {
+                id: 8,
+                question: "Apakah nama hukum bagi contoh ayat di bawah di mana terdapat nun mati yang ditandakan dengan mim kecil di atasnya?",
+                arabic: "مِنْ بَعْدِ",
+                choices: [
+                    "Iqlab",
+                    "Idgham Maal Ghunnah",
+                    "Izhar Halqi",
+                    "Ikhfa' Haqiqi"
+                ],
+                correctIndex: 0,
+                explanation: "Sangat tepat! Hukumnya ialah Iqlab. Apabila Nun mati bertemu huruf Ba (ب), sebutan nun ditukar menjadi sebutan Mim (م) yang didengungkan."
+            },
+            {
+                id: 9,
+                question: "Berapakah bilangan huruf bagi hukum Iqlab dan apakah huruf tersebut?",
+                choices: [
+                    "1 huruf sahaja, iaitu Ba (ب)",
+                    "2 huruf, iaitu Lam (ل) dan Ra (ر)",
+                    "6 huruf, iaitu huruf halqum",
+                    "15 huruf semuanya"
+                ],
+                correctIndex: 0,
+                explanation: "Betul! Iqlab hanya mempunyai SATU huruf sahaja di dalam Al-Quran, iaitu huruf Ba (ب)."
+            },
+            {
+                id: 10,
+                question: "Apakah takrifan dari segi istilah bagi hukum 'Ikhfa' Haqiqi'?",
+                choices: [
+                    "Membunyikan Nun Mati secara jelas tanpa dengung",
+                    "Menukarkan sebutan Nun Mati kepada sebutan huruf Mim",
+                    "Menyebut huruf di antara bunyi Izhar dan Idgham secara dengung",
+                    "Memasukkan bunyi huruf pertama ke dalam huruf kedua"
+                ],
+                correctIndex: 2,
+                explanation: "Betul! Ikhfa' bermaksud menyembunyikan atau menyamarkan sebutan Nun Mati di antara jelas (Izhar) dan masuk (Idgham) berserta dengung 2 harakat."
+            },
+            {
+                id: 11,
+                question: "Berapakah jumlah keseluruhan huruf Ikhfa' Haqiqi?",
+                choices: [
+                    "6 Huruf",
+                    "15 Huruf",
+                    "4 Huruf",
+                    "1 Huruf"
+                ],
+                correctIndex: 1,
+                explanation: "Tepat! Huruf Ikhfa' Haqiqi ada 15 huruf (semua baki huruf Hijaiyah selepas ditolak huruf Izhar, Idgham, dan Iqlab)."
+            },
+            {
+                id: 12,
+                question: "Kenalpasti hukum tajwid bagi potongan ayat berikut:",
+                arabic: "مِنْ خَوْفٍ",
+                choices: [
+                    "Idgham Bila Ghunnah",
+                    "Iqlab",
+                    "Izhar Halqi",
+                    "Ikhfa' Haqiqi"
+                ],
+                correctIndex: 2,
+                explanation: "Betul! Ia adalah Izhar Halqi kerana terdapat Nun Mati (نْ) bertemu dengan huruf Kha (خ) yang merupakan huruf Izhar. Sebutan dibaca jelas: 'Min khaufin'."
+            },
+            {
+                id: 13,
+                question: "Apakah hukum bagi nun mati di dalam kalimah berikut?",
+                arabic: "أَنْدَادًا",
+                choices: [
+                    "Ikhfa' Haqiqi",
+                    "Izhar Halqi",
+                    "Iqlab",
+                    "Idgham Maal Ghunnah"
+                ],
+                correctIndex: 0,
+                explanation: "Tepat! Ia merupakan Ikhfa' Haqiqi kerana Nun mati bertemu dengan huruf Dal (د) dalam satu kalimah. Sebutan disamarkan dengan dengung."
+            },
+            {
+                id: 14,
+                question: "Apakah hukum tajwid bagi sebutan di bawah di mana nun mati bertemu dengan huruf Ya (ي)?",
+                arabic: "مَنْ يَقُولُ",
+                choices: [
+                    "Izhar Halqi",
+                    "Iqlab",
+                    "Idgham Maal Ghunnah",
+                    "Idgham Bila Ghunnah"
+                ],
+                correctIndex: 2,
+                explanation: "Betul! Ia dibaca secara Idgham Maal Ghunnah (memasukkan berserta dengung) kerana Nun mati bertemu dengan huruf Ya (ي) di dalam dua kalimah terpisah."
+            },
+            {
+                id: 15,
+                question: "Sempurnakan ayat ini: 'Apabila nun mati bertemu dengan huruf Lam (ل) atau Ra (ر), cara membacanya ialah...'",
+                choices: [
+                    "Mendengungkan sebutan sepanjang 2 harakat",
+                    "Memasukkan bunyi tanpa mendengung langsung",
+                    "Membaca dengan jelas tanpa ada sebarang perubahan",
+                    "Menukar bunyi menjadi huruf Ba"
+                ],
+                correctIndex: 1,
+                explanation: "Benar! Hukumnya ialah Idgham Bila Ghunnah, iaitu memasukkan bunyi nun mati ke dalam huruf seterusnya tanpa sebarang dengungan."
+            },
+            {
+                id: 16,
+                question: "Bagaimanakah kaedah merapatkan bibir semasa menyebut bacaan Iqlab yang betul?",
+                choices: [
+                    "Merapatkan bibir secara ringan tanpa tekanan yang kuat (ada ruang halus)",
+                    "Membuka mulut dengan luas",
+                    "Menekan bibir sekencang mungkin",
+                    "Menjelirkan lidah ke hadapan"
+                ],
+                correctIndex: 0,
+                explanation: "Tepat! Bacaan Iqlab diamalkan dengan merapatkan dua bibir secara lembut dan ringan bagi mengeluarkan bunyi Mim (م) yang didengungkan secara ikhfa'."
+            },
+            {
+                id: 17,
+                question: "Apakah hukum tajwid bagi gandingan tanwin dhommah (baris dua di depan) bertemu huruf Ba (ب) berikut?",
+                arabic: "سَمِيعٌ بَصِيرٌ",
+                choices: [
+                    "Izhar Halqi",
+                    "Ikhfa' Haqiqi",
+                    "Iqlab",
+                    "Idgham Maal Ghunnah"
+                ],
+                correctIndex: 2,
+                explanation: "Betul! Ini adalah Iqlab kerana tanwin dhommah (ـٌ) pada 'سَمِيعٌ' bertemu dengan huruf Ba (ب). Bunyi bertukar menjadi 'Sami'um-basir'."
+            },
+            {
+                id: 18,
+                question: "Pilih potongan ayat Al-Quran yang mengandungi contoh hukum Izhar Halqi.",
+                choices: [
+                    "أَنْعَمْتَ عَلَيْهِمْ",
+                    "مِنْ مَاءٍ طِينٍ",
+                    "مِنْ بَعْضٍ",
+                    "كِتَابٌ مُبِينٌ"
+                ],
+                correctIndex: 0,
+                explanation: "Hebat! Pada perkataan 'أَنْعَمْتَ', terdapat Nun mati bertemu huruf 'Ain (ع) dalam satu kalimah, maka ia mesti dibaca secara Izhar (jelas)."
+            },
+            {
+                id: 19,
+                question: "Apakah hukum tajwid apabila tanwin bertemu dengan huruf Mim (م)?",
+                arabic: "كُلٌّ مِنْ عِنْدِ اللَّهِ",
+                choices: [
+                    "Idgham Maal Ghunnah",
+                    "Idgham Bila Ghunnah",
+                    "Izhar Halqi",
+                    "Iqlab"
+                ],
+                correctIndex: 0,
+                explanation: "Tepat! Tanwin dhommah (ـٌ) bertemu dengan huruf Mim (م
