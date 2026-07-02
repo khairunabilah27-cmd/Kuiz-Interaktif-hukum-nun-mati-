@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -91,7 +90,7 @@
             </div>
 
             <!-- Feedback / Explanation Box -->
-            <div id="feedback-box" class="hidden transform translate-y-2 opacity-0 transition-all duration-300 ease-out bg-slate-50 rounded-2xl p-4 border flex flex-col gap-2">
+            <div id="feedback-box" class="hidden bg-slate-50 rounded-2xl p-4 border flex flex-col gap-2">
                 <div class="flex items-center gap-2 font-bold text-base md:text-lg" id="feedback-title">
                     <!-- Dynamic status (Betul/Salah) and icon -->
                 </div>
@@ -102,7 +101,7 @@
 
             <!-- Navigation Button -->
             <div class="flex justify-end pt-2">
-                <button id="btn-next" class="hidden bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all duration-200 items-center gap-2">
+                <button id="btn-next" class="hidden bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all duration-200 flex items-center gap-2">
                     <span>Seterusnya</span> ➡️
                 </button>
             </div>
@@ -128,11 +127,11 @@
             <div class="grid grid-cols-2 gap-4 w-full max-w-md">
                 <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl text-center">
                     <span class="block text-xs font-bold text-emerald-600 uppercase tracking-wider">Jawapan Betul</span>
-                    <span class="text-2xl font-black text-emerald-800" id="final-correct">18 / 20</span>
+                    <span class="text-2xl font-black text-emerald-800" id="final-correct">0 / 20</span>
                 </div>
                 <div class="bg-teal-50 border border-teal-100 p-4 rounded-2xl text-center">
                     <span class="block text-xs font-bold text-teal-600 uppercase tracking-wider">Peratus Skor</span>
-                    <span class="text-2xl font-black text-teal-800" id="final-percentage">90%</span>
+                    <span class="text-2xl font-black text-teal-800" id="final-percentage">0%</span>
                 </div>
             </div>
 
@@ -158,7 +157,6 @@
 
     <!-- Interactive Logic (JavaScript) -->
     <script>
-        // Quiz Data - 20 Questions
         const quizQuestions = [
             {
                 id: 1,
@@ -189,8 +187,8 @@
                 id: 3,
                 question: "Manakah antara berikut merupakan semua huruf bagi hukum Izhar Halqi?",
                 choices: [
-                    "ي , ن , م , و",
-                    "ء , هـ , ع , ح , غ , خ",
+                    "ي , ن , م , w",
+                    "ء , هـ , ع , ح , غ , kh",
                     "ت , ث , ج , د , ذ",
                     "ب"
                 ],
@@ -227,7 +225,7 @@
                 choices: [
                     "ل , ر",
                     "ء , هـ",
-                    "ي , ن , م , w (يَنْمُو)",
+                    "ي , ن , م , و (يَنْمُو)",
                     "ب"
                 ],
                 correctIndex: 2,
@@ -386,7 +384,7 @@
             {
                 id: 19,
                 question: "Apakah hukum tajwid apabila tanwin bertemu dengan huruf Mim (م)?",
-                arabic: "كُلٌّ مِنْ عِنْدِ اللَّهِ",
+                arabic: "كُلٌّ مِنْ عِنْدِ اللَّهِ",
                 choices: [
                     "Idgham Maal Ghunnah",
                     "Idgham Bila Ghunnah",
@@ -394,4 +392,176 @@
                     "Iqlab"
                 ],
                 correctIndex: 0,
-                explanation: "Tepat! Tanwin dhommah (ـٌ) bertemu dengan huruf Mim (م
+                explanation: "Tepat! Tanwin dhommah bertemu dengan huruf Mim (م) merupakan contoh bagi hukum Idgham Maal Ghunnah (memasukkan serta mendengungkan bacaan)."
+            },
+            {
+                id: 20,
+                question: "Berapakah kadar harakat (panjang dengung) yang wajib dibaca pada hukum Ikhfa' Haqiqi dan Idgham Maal Ghunnah?",
+                choices: [
+                    "1 Harakat",
+                    "2 Harakat",
+                    "4 Harakat",
+                    "6 Harakat"
+                ],
+                correctIndex: 1,
+                explanation: "Alhamdulillah selesai! Kadar dengung bagi kedua-dua hukum tajwid ini ialah sebanyak 2 harakat."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        // Elements
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        
+        const btnStart = document.getElementById('btn-start');
+        const btnNext = document.getElementById('btn-next');
+        const btnRestart = document.getElementById('btn-restart');
+
+        const questionCounter = document.getElementById('question-counter');
+        const scoreCounter = document.getElementById('score-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const questionText = document.getElementById('question-text');
+        const arabicContainer = document.getElementById('arabic-container');
+        const arabicText = document.getElementById('arabic-text');
+        const choicesContainer = document.getElementById('choices-container');
+        
+        const feedbackBox = document.getElementById('feedback-box');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackExplanation = document.getElementById('feedback-explanation');
+
+        // Event Listeners
+        btnStart.addEventListener('click', startQuiz);
+        btnNext.addEventListener('click', nextQuestion);
+        btnRestart.addEventListener('click', restartQuiz);
+
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            hasAnswered = false;
+            btnNext.classList.add('hidden');
+            feedbackBox.classList.add('hidden');
+            choicesContainer.innerHTML = '';
+
+            const q = quizQuestions[currentQuestionIndex];
+            
+            // Counters & Progress
+            questionCounter.innerText = `Soalan ${currentQuestionIndex + 1} / ${quizQuestions.length}`;
+            scoreCounter.innerText = `Markah: ${score}`;
+            const progressPercent = ((currentQuestionIndex + 1) / quizQuestions.length) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+
+            // Question Text
+            questionText.innerText = q.question;
+
+            // Arabic Text Container
+            if (q.arabic) {
+                arabicContainer.classList.remove('hidden');
+                arabicText.innerText = q.arabic;
+            } else {
+                arabicContainer.classList.add('hidden');
+            }
+
+            // Generate Choice Buttons
+            q.choices.forEach((choice, index) => {
+                const btn = document.createElement('button');
+                btn.innerText = choice;
+                btn.className = "w-full text-left p-4 rounded-xl border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all font-medium text-sm md:text-base flex items-center justify-between";
+                btn.addEventListener('click', () => selectAnswer(index, btn));
+                choicesContainer.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selectedIndex, clickedBtn) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const q = quizQuestions[currentQuestionIndex];
+            const buttons = choicesContainer.getElementsByTagName('button');
+
+            // Check Answer
+            if (selectedIndex === q.correctIndex) {
+                score += 1;
+                scoreCounter.innerText = `Markah: ${score}`;
+                clickedBtn.classList.remove('border-slate-200');
+                clickedBtn.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900', 'font-bold');
+                clickedBtn.innerHTML += ' <span>✅</span>';
+                
+                feedbackTitle.innerHTML = '<span class="text-emerald-600">🎉 Betul!</span>';
+                feedbackBox.className = "bg-emerald-50 border-emerald-200 rounded-2xl p-4 border flex flex-col gap-2";
+            } else {
+                clickedBtn.classList.remove('border-slate-200');
+                clickedBtn.classList.add('border-rose-400', 'bg-rose-50', 'text-rose-900');
+                clickedBtn.innerHTML += ' <span>❌</span>';
+
+                // Highlight correct one
+                buttons[q.correctIndex].classList.remove('border-slate-200');
+                buttons[q.correctIndex].classList.add('border-emerald-500', 'bg-emerald-50/50');
+                buttons[q.correctIndex].innerHTML += ' <span>✨</span>';
+
+                feedbackTitle.innerHTML = '<span class="text-rose-600">❌ Kurang Tepat</span>';
+                feedbackBox.className = "bg-rose-50 border-rose-200 rounded-2xl p-4 border flex flex-col gap-2";
+            }
+
+            // Show explanation
+            feedbackExplanation.innerText = q.explanation;
+            feedbackBox.classList.remove('hidden');
+            btnNext.classList.remove('hidden');
+            btnNext.style.display = 'flex';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizQuestions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+
+            document.getElementById('final-correct').innerText = `${score} / ${quizQuestions.length}`;
+            const percentage = Math.round((score / quizQuestions.length) * 100);
+            document.getElementById('final-percentage').innerText = `${percentage}%`;
+
+            const rankBadge = document.getElementById('rank-badge');
+            const rankEmojiBg = document.getElementById('rank-emoji-bg');
+            const finalComment = document.getElementById('final-comment');
+
+            if (percentage >= 80) {
+                rankBadge.innerText = "MUMTAZ";
+                rankBadge.className = "absolute -bottom-2 -right-2 bg-emerald-500 text-white font-extrabold px-3 py-1 rounded-full text-xs shadow-md";
+                rankEmojiBg.innerText = "🎓";
+                finalComment.innerText = "Hebat sungguh pemahaman tajwid anda! Teruskan membaca Al-Quran dengan tartil dan betul.";
+            } else if (percentage >= 50) {
+                rankBadge.innerText = "JAYYID";
+                rankBadge.className = "absolute -bottom-2 -right-2 bg-amber-500 text-white font-extrabold px-3 py-1 rounded-full text-xs shadow-md";
+                rankEmojiBg.innerText = "👍";
+                finalComment.innerText = "Usaha yang baik! Anda mempunyai asas yang mantap, cuma perlu lebihkan ulangkaji jadual huruf tajwid.";
+            } else {
+                rankBadge.innerText = "MAQBUL";
+                rankBadge.className = "absolute -bottom-2 -right-2 bg-rose-500 text-white font-extrabold px-3 py-1 rounded-full text-xs shadow-md";
+                rankEmojiBg.innerText = "📚";
+                finalComment.innerText = "Jangan putus asa. Mari lakukan ulangkaji lagi dan cuba kuiz ini semula untuk memantapkan ilmu tajwid anda!";
+            }
+        }
+
+        function restartQuiz() {
+            resultsScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
